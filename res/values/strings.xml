@@ -1,0 +1,8 @@
+<resources>
+
+    <string name="app_name">Security</string>
+    <string name="version">1.0</string>
+    <string name="main">主界面</string>
+    <string name="spin_prompt"> 请选择城市 </string>
+
+</resources>

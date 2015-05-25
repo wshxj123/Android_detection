@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="70dip"
+    android:gravity="center_vertical"
+    android:id="@+id/ll_popup_app"
+    android:orientation="horizontal" >
+
+    <LinearLayout
+        android:id="@+id/ll_app_uninstall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dip"
+        android:gravity="center_horizontal"
+        android:orientation="vertical" >
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/img1" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="卸载" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="0.6dip"
+        android:layout_height="60dip"
+        android:layout_marginLeft="5dip"
+        android:background="@drawable/local_popup_divider" >
+    </View>
+
+    <LinearLayout
+        android:id="@+id/ll_app_start"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dip"
+        android:gravity="center_horizontal"
+        android:orientation="vertical" >
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/img2" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="运行" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="0.6dip"
+        android:layout_height="60dip"
+        android:layout_marginLeft="5dip"
+        android:background="@drawable/local_popup_divider" >
+    </View>
+
+    <LinearLayout
+        android:id="@+id/ll_app_permission"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dip"
+        android:gravity="center_horizontal"
+        android:orientation="vertical" >
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/img3" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="权限" />
+    </LinearLayout>
+
+</LinearLayout>
