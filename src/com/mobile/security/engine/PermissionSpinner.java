@@ -1,34 +1,20 @@
 package com.mobile.security.engine;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import com.mobile.security.domain.AppInfo;
-import com.mobile.security.ui.GetPermissionActivity;
-import com.mobile.security.utils.Logger;
 
-import android.app.Activity;
-import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
-import android.content.pm.PermissionGroupInfo;
-import android.content.pm.PermissionInfo;
+//import android.content.pm.PermissionGroupInfo;
 import android.graphics.drawable.Drawable;
-import android.os.Handler;
 import android.util.Log;
 
 public class PermissionSpinner {
@@ -38,7 +24,7 @@ public class PermissionSpinner {
 
 		try {
 			PackageManager pm = context.getPackageManager();
-			PermissionGroupInfo pgi;
+			//PermissionGroupInfo pgi;
 			PackageInfo pkgInfo = pm.getPackageInfo(pkgName,
 					PackageManager.GET_PERMISSIONS);
 			String[] sharedPkgList = pkgInfo.requestedPermissions;

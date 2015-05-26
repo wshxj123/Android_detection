@@ -5,24 +5,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.mobile.security.R;
 import com.mobile.security.domain.AppInfo;
-import com.mobile.security.ui.AppManagerActivity;
-import com.mobile.security.ui.GetPermissionActivity;
-import com.mobile.security.ui.MainActivity;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.drawable.Drawable;
-import android.util.Log;
-import android.widget.ArrayAdapter;
-import android.widget.Spinner;
-import android.widget.TextView;
 
 /**
  * 获取所有的安装在手机上的应用程序的信息

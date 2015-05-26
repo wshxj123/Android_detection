@@ -159,7 +159,7 @@ public final class R {
         public static final int tv_appversion=0x7f060011;
         public static final int tv_main_name=0x7f06003c;
         public static final int tv_splash_version=0x7f06004a;
-        public static final int weixin_detection=0x7f06002a;
+        public static final int wechat_detection=0x7f06002a;
     }
     public static final class layout {
         public static final int antivirus=0x7f030000;

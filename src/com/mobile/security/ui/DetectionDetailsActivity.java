@@ -34,12 +34,13 @@ import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
-public  class DetectionDetailsActivity extends Activity implements android.view.View.OnClickListener {
+public class DetectionDetailsActivity extends Activity implements
+		android.view.View.OnClickListener {
 	protected static final int LOAD_DET_FINSISH = 40;
 	public static final String TAG = "DetectionDetalsActivity";
 	private ListView dd_manager;
 	private LinearLayout dd_loading;
-	private List<DetectionInfo> detinfos=new ArrayList<DetectionInfo>();
+	private List<DetectionInfo> detinfos = new ArrayList<DetectionInfo>();
 	private DetectionInfoAdapter adapter;
 	private TextView dd_title;
 	private boolean loading;
@@ -77,7 +78,7 @@ public  class DetectionDetailsActivity extends Activity implements android.view.
 
 		btn_return = (Button) findViewById(R.id.dd_fanhui);
 		btn_return.setOnClickListener(DetectionDetailsActivity.this);
-		
+
 		Intent getintent = getIntent();
 		mtype = getintent.getStringExtra("mtype");
 
@@ -95,15 +96,15 @@ public  class DetectionDetailsActivity extends Activity implements android.view.
 			public void run() {
 				loading = true;
 
-				if (mtype.equals("SMS"))
-				{
+				if (mtype.equals("SMS")) {
 					readSMSlist();
 					readdelSMSlist();
-				}
-				else if (mtype.equals("Internet"))
+				} else if (mtype.equals("Internet"))
 					readInternetlist();
 				else if (mtype.equals("QQ"))
 					readQQlist();
+				else if (mtype.equals("Wechat"))
+					readWxlist();
 
 				Message msg = Message.obtain();
 				msg.what = LOAD_DET_FINSISH;
@@ -114,7 +115,7 @@ public  class DetectionDetailsActivity extends Activity implements android.view.
 	}
 
 	private void readSMSlist() {
-		
+
 		File file = new File(Environment.getExternalStorageDirectory()
 				.getPath() + "/Securitytest", "SMS.txt");
 		if (!file.exists()) {
@@ -142,8 +143,8 @@ public  class DetectionDetailsActivity extends Activity implements android.view.
 			// TODO 自动生成的 catch 块
 			e.printStackTrace();
 		}
-		
-		if(filecontent.equals(""))
+
+		if (filecontent.equals(""))
 			return;
 		String parts1[] = filecontent.split("]");
 		for (int i = 0; i < parts1.length; i++) {
@@ -159,11 +160,12 @@ public  class DetectionDetailsActivity extends Activity implements android.view.
 			}
 			detinfo.setContent(part);
 			detinfos.add(detinfo);
-			detinfo=null;
+			detinfo = null;
 		}
 	}
+
 	private void readdelSMSlist() {
-		
+
 		File file = new File(Environment.getExternalStorageDirectory()
 				.getPath() + "/Securitytest", "delSMS.txt");
 		if (!file.exists()) {
@@ -198,7 +200,7 @@ public  class DetectionDetailsActivity extends Activity implements android.view.
 			String part = parts2[i];
 			detinfo.setContent(part);
 			detinfos.add(detinfo);
-			detinfo=null;
+			detinfo = null;
 		}
 	}
 
@@ -231,10 +233,13 @@ public  class DetectionDetailsActivity extends Activity implements android.view.
 			// TODO 自动生成的 catch 块
 			e.printStackTrace();
 		}
+		
+		if(filecontent.length() <= 1)
+			return;
 
 		String parts[] = filecontent.split("</history>");
-		for (int i = 0; i < parts.length - 1; i++) {
-			
+		for (int i = 0; i < parts.length; i++) {
+
 			DetectionInfo detinfo = new DetectionInfo();
 			String regEx1 = "<title>([\\s\\S]*?)</title>";
 			Pattern pat1 = Pattern.compile(regEx1);
@@ -254,12 +259,80 @@ public  class DetectionDetailsActivity extends Activity implements android.view.
 			String part = "标题:" + mat1.group(1) + '\n' + "链接:" + mat2.group(1)
 					+ '\n' + "时间:" + mat3.group(1);
 			detinfo.setContent(part);
-			
+
 			detinfos.add(detinfo);
-			detinfo=null;
+			detinfo = null;
 		}
 	}
-	
+
+	private void readWxlist() {
+
+		File file = new File(Environment.getExternalStorageDirectory()
+				.getPath() + "/Securitytest", "Wechat.txt");
+		if (!file.exists()) {
+			return;
+		}
+
+		InputStreamReader read = null;
+		try {
+			read = new InputStreamReader(new FileInputStream(file), "UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			// TODO 自动生成的 catch 块
+			e.printStackTrace();
+		} catch (FileNotFoundException e) {
+			// TODO 自动生成的 catch 块
+			e.printStackTrace();
+		}
+		BufferedReader reader = new BufferedReader(read);
+		String filecontent = "";
+		String tempcontent = "";
+		try {
+			while ((tempcontent = reader.readLine()) != null) {
+				filecontent += tempcontent;
+			}
+			reader.close();
+		} catch (IOException e) {
+			// TODO 自动生成的 catch 块
+			e.printStackTrace();
+		}
+		
+		if(filecontent.length() <= 1)
+			return;
+		String parts[] = filecontent.split("</chat>");
+		for (int i = 0; i < parts.length; i++) {
+			DetectionInfo detinfo = new DetectionInfo();
+
+			/*
+			 * String regEx1 = "<uin>([\\s\\S]*?)</uin>"; Pattern pat1 =
+			 * Pattern.compile(regEx1); Matcher mat1 = pat1.matcher(parts[i]);
+			 * mat1.find();
+			 */
+
+			String regEx2 = "<time>([\\s\\S]*?)</time>";
+			Pattern pat2 = Pattern.compile(regEx2);
+			Matcher mat2 = pat2.matcher(parts[i]);
+			mat2.find();
+
+			String regEx3 = "<talker>([\\s\\S]*?)</talker>";
+			Pattern pat3 = Pattern.compile(regEx3);
+			Matcher mat3 = pat3.matcher(parts[i]);
+			mat3.find();
+
+			String regEx4 = "<content>([\\s\\S]*?)</content>";
+			Pattern pat4 = Pattern.compile(regEx4);
+			Matcher mat4 = pat4.matcher(parts[i]);
+			mat4.find();
+
+			String part = "时间:" + mat2.group(1) + "\n好友id:" + mat3.group(1)
+					+ '\n' + "内容:\n" + mat4.group(1);
+			Logger.i("showwx", part);
+			detinfo.setContent(part);
+
+			detinfos.add(detinfo);
+			detinfo = null;
+		}
+	}
+
 	private void readQQlist() {
 
 		File file = new File(Environment.getExternalStorageDirectory()
@@ -289,16 +362,19 @@ public  class DetectionDetailsActivity extends Activity implements android.view.
 			// TODO 自动生成的 catch 块
 			e.printStackTrace();
 		}
+		
+		if(filecontent.length() <= 1)
+			return;
 
 		String parts[] = filecontent.split("</chat>");
-		for (int i = 0; i < parts.length - 1; i++) {
+		for (int i = 0; i < parts.length; i++) {
 			DetectionInfo detinfo = new DetectionInfo();
-			
+
 			String regEx1 = "<qq>([\\s\\S]*?)</qq>";
 			Pattern pat1 = Pattern.compile(regEx1);
 			Matcher mat1 = pat1.matcher(parts[i]);
 			mat1.find();
-			
+
 			String regEx2 = "<time>([\\s\\S]*?)</time>";
 			Pattern pat2 = Pattern.compile(regEx2);
 			Matcher mat2 = pat2.matcher(parts[i]);
@@ -309,11 +385,12 @@ public  class DetectionDetailsActivity extends Activity implements android.view.
 			Matcher mat3 = pat3.matcher(parts[i]);
 			mat3.find();
 
-			String part = "登录QQ:" + mat1.group(1) + "  时间:" + mat2.group(1) + '\n' + "内容:\n" + mat3.group(1);
+			String part = "登录QQ:" + mat1.group(1) + "  时间:" + mat2.group(1)
+					+ '\n' + "内容:\n" + mat3.group(1);
 			detinfo.setContent(part);
-			
+
 			detinfos.add(detinfo);
-			detinfo=null;
+			detinfo = null;
 		}
 	}
 
@@ -356,11 +433,12 @@ public  class DetectionDetailsActivity extends Activity implements android.view.
 				Logger.i(TAG, "GETvIEW----" + position + "使用历史的view对象");
 			}
 			DetectionInfo tdetinfo = adapterdetinfos.get(position);
-			
-//			holder.tv_content.setAutoLinkMask(Linkify.ALL);
-//			holder.tv_content.setAutoLinkMask(Linkify.PHONE_NUMBERS |Linkify.WEB_URLS);
-//			holder.tv_content.setMovementMethod(LinkMovementMethod
-//					.getInstance());
+
+			// holder.tv_content.setAutoLinkMask(Linkify.ALL);
+			// holder.tv_content.setAutoLinkMask(Linkify.PHONE_NUMBERS
+			// |Linkify.WEB_URLS);
+			// holder.tv_content.setMovementMethod(LinkMovementMethod
+			// .getInstance());
 			holder.tv_content.setText(tdetinfo.getContent());
 			return view;
 		}
@@ -370,7 +448,7 @@ public  class DetectionDetailsActivity extends Activity implements android.view.
 	static class ViewHolder {
 		TextView tv_content;
 	}
-	
+
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.id.dd_fanhui:

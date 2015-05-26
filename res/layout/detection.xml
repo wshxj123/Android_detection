@@ -369,7 +369,7 @@
             <!-- 微信聊天记录 -->
 
             <RelativeLayout
-                android:id="@+id/weixin_detection"
+                android:id="@+id/wechat_detection"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:background="#ffffff" >

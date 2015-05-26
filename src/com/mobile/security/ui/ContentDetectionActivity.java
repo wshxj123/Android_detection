@@ -19,11 +19,17 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+//import net.sqlcipher.Cursor;
+import net.sqlcipher.database.SQLiteDatabaseHook;
+import net.sqlcipher.database.SQLiteException;
+//import net.sqlcipher.database.SQLiteDatabase;
+
 import org.apache.http.util.EncodingUtils;
 
 import com.mobile.security.ac.AcApply;
 import com.mobile.security.ac.AhoCorasick;
 import com.mobile.security.ac.SearchResult;
+import com.mobile.security.engine.EncryptionByMD5;
 import com.mobile.security.utils.FileCopyUtil;
 import com.mobile.security.utils.Logger;
 
@@ -34,7 +40,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteException;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -51,7 +56,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
-import android.database.sqlite.*;
 
 public class ContentDetectionActivity extends Activity implements
 		OnClickListener {
@@ -60,7 +64,7 @@ public class ContentDetectionActivity extends Activity implements
 
 	private ImageView iv_return;
 	private Button btn_setwords, btn_return, btn_detection;
-	private RelativeLayout rl_decting, rl_SMS, rl_Internet, rl_QQ;
+	private RelativeLayout rl_decting, rl_SMS, rl_Internet, rl_QQ, rl_Wx;
 	private ProgressBar progressBar;
 	private int i, armprogress;
 	private FileOutputStream out = null;
@@ -80,9 +84,8 @@ public class ContentDetectionActivity extends Activity implements
 		rl_SMS = (RelativeLayout) findViewById(R.id.SMS_detection);
 		rl_Internet = (RelativeLayout) findViewById(R.id.Internet_detection);
 		rl_QQ = (RelativeLayout) findViewById(R.id.qq_detection);
-		// rl_privacy = (RelativeLayout)
-		// findViewById(R.id.clear_main_ll_privacy);
-		// rl_packge = (RelativeLayout)
+		rl_Wx = (RelativeLayout)findViewById(R.id.wechat_detection);
+		// rl_ackge = (RelativeLayout)
 		// findViewById(R.id.clear_main_ll_package);
 		btn_return = (Button) findViewById(R.id.detection_fanhui);
 		btn_detection = (Button) findViewById(R.id.detection_main);
@@ -96,7 +99,7 @@ public class ContentDetectionActivity extends Activity implements
 		rl_SMS.setOnClickListener(this);
 		rl_Internet.setOnClickListener(this);
 		rl_QQ.setOnClickListener(this);
-		// rl_privacy.setOnClickListener(this);
+		rl_Wx.setOnClickListener(this);
 		// rl_packge.setOnClickListener(this);
 		btn_return.setOnClickListener(this);
 		btn_detection.setOnClickListener(this);
@@ -133,6 +136,15 @@ public class ContentDetectionActivity extends Activity implements
 			qqIntent.setClass(ContentDetectionActivity.this,
 					DetectionDetailsActivity.class);
 			startActivity(qqIntent);
+			break;
+			
+		case R.id.wechat_detection:
+			Intent wxIntent = new Intent();
+			wxIntent.putExtra("mtype", "Wechat");
+			wxIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+			wxIntent.setClass(ContentDetectionActivity.this,
+					DetectionDetailsActivity.class);
+			startActivity(wxIntent);
 			break;
 
 		case R.id.set_words:
@@ -403,6 +415,31 @@ public class ContentDetectionActivity extends Activity implements
 				/*
 				 * 获得微信聊天记录
 				 */
+				m2 = handler.obtainMessage();
+				m2.what = 1;
+				m2.arg1 = 100;
+				m2.sendToTarget();
+
+				try {
+					String strwx = "";
+					try {
+						strwx = getWechat();
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					file = new File(Environment.getExternalStorageDirectory()
+							.getPath() + "/Securitytest", "Wechat.txt");
+					if (!file.exists())
+						file.createNewFile();
+					out = new FileOutputStream(file);
+					out.write(strwx.getBytes());
+					out.flush();
+					out.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 
 				// if (i == 100) {
 				m2 = handler.obtainMessage();
@@ -711,7 +748,8 @@ public class ContentDetectionActivity extends Activity implements
 					if (!result2.isEmpty()) {
 						// qqBuilder.append(formatTime + "," + message + ";");
 						qqBuilder.append("<chat><qq>");
-						qqBuilder.append(dbname.substring(0, dbname.length() - 3) + "</qq><time>");
+						qqBuilder.append(dbname.substring(0,
+								dbname.length() - 3) + "</qq><time>");
 						qqBuilder.append(formatTime + "</time><content>");
 						qqBuilder.append(message + "</content></chat>");
 						// Log.i("解密结果->", formatTime + "," + message + ";");
@@ -741,5 +779,86 @@ public class ContentDetectionActivity extends Activity implements
 			e.printStackTrace();
 		}
 		return list;
+	}
+
+	/**
+	 * 获取微信聊天记录
+	 * 
+	 * @return
+	 * @throws Exception 
+	 */
+
+	public String getWechat() throws Exception {
+
+		net.sqlcipher.database.SQLiteDatabase.loadLibs(this);
+		String uin = "730056401";
+		
+		TelephonyManager tm = (TelephonyManager) mCtx
+				.getSystemService(Context.TELEPHONY_SERVICE);
+		String imei = tm.getDeviceId();
+		
+		String password = EncryptionByMD5.getMD5((imei + uin).getBytes()).substring(0, 7);
+		String foldername = EncryptionByMD5.getMD5(("mm" + uin).getBytes());
+		
+		File databaseFile = new File(getFilesDir(), "EnMicroMsg.db");
+		InputStream is = new FileInputStream(
+				"/data/data/com.tencent.mm/MicroMsg/" + foldername + "/EnMicroMsg.db");
+		FileCopyUtil.copyFile(is, databaseFile);
+		
+		SQLiteDatabaseHook hook = new SQLiteDatabaseHook() {
+			@Override
+			public void postKey(net.sqlcipher.database.SQLiteDatabase database) {
+				// TODO Auto-generated method stub
+				database.rawExecSQL("PRAGMA cipher_migrate;"); // 最关键的一句！！！
+			}
+
+			@Override
+			public void preKey(net.sqlcipher.database.SQLiteDatabase database) {
+				// TODO Auto-generated method stub
+
+			}
+		};
+
+		AcApply obj = new AcApply();
+		StringBuilder wxBuilder = new StringBuilder(); // 微信聊天记录
+		net.sqlcipher.database.SQLiteDatabase db = net.sqlcipher.database.SQLiteDatabase
+				.openOrCreateDatabase(databaseFile, password, null, hook);
+		
+		int onceNum = 100;
+		int num1 = 1, num2 = 100;
+		Cursor cur = db.rawQuery("select count(*) from message", null);
+		cur.moveToFirst();
+		Long count = cur.getLong(0);
+		cur.close();
+		
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		while (count != 0) {
+			cur = db.rawQuery(
+					"select msgId,createTime,talker,content from message group by msgId having msgId >= ? and msgId <= ?",
+					new String[] { String.valueOf(num1), String.valueOf(num2) });
+			while (cur.moveToNext()) {
+				count -= 1;
+				String _id = cur.getString(cur.getColumnIndex("msgId"));
+				String time = cur.getString(cur.getColumnIndex("createTime"));
+				String formatTime = sdf.format(Long.parseLong(time));
+				String talker = cur.getString(cur.getColumnIndex("talker"));
+				String content = cur.getString(cur.getColumnIndex("content"));
+				
+				Set result2 = obj.findWordsInArray(wordsStrings, content);
+				
+				if (!result2.isEmpty()) {
+					//Log.i("wechat->", "_id=>" + _id);
+
+					wxBuilder.append("<chat><time>");
+					wxBuilder.append(formatTime + "</time><talker>");
+					wxBuilder.append(talker + "</talker><content>");
+					wxBuilder.append(content + "</content></chat>");
+				}
+			}
+			cur.close();
+			num1 += onceNum;
+			num2 += onceNum;
+		}
+		return wxBuilder.toString();
 	}
 }
