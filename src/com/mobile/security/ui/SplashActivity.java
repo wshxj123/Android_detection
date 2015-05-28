@@ -2,6 +2,7 @@ package com.mobile.security.ui;
 
 import java.io.File;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -15,6 +16,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
+import android.os.StrictMode;
 import android.util.Log;
 import android.view.Window;
 import android.view.WindowManager;
@@ -44,8 +46,11 @@ public class SplashActivity extends Activity {
 	private String versionStr;
 	private ProgressDialog progressDialog;
 
-	@Override
+	@SuppressLint("NewApi")
 	protected void onCreate(Bundle savedInstanceState) {
+		
+		StrictMode.ThreadPolicy policy=new StrictMode.ThreadPolicy.Builder().permitAll().build();
+		StrictMode.setThreadPolicy(policy);
 		
 		super.onCreate(savedInstanceState);
 		
@@ -123,12 +128,14 @@ public class SplashActivity extends Activity {
 		
 		UpdateInfoService updateInfoService = new UpdateInfoService(this);
 		try {
+			
 			info = updateInfoService.getUpdateInfo(R.string.serverUrl);
 			String newVersion = info.getVersion();
 			if (versionStr.equals(newVersion)) {
 				Log.d(TAG, "no need to update");
 				Log.d(TAG, "当前版本：" + versionStr);
                 Log.d(TAG, "最新版本：" + newVersion);
+                //Toast.makeText(this, "已是最新版本", Toast.LENGTH_SHORT).show();
                 loadMainUI();
 				return false;
 			} else {
@@ -137,7 +144,7 @@ public class SplashActivity extends Activity {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			//Toast.makeText(this, "获取版本信息异常,请稍后再试", Toast.LENGTH_SHORT).show();
+			Toast.makeText(this, "获取版本信息异常,请稍后再试", Toast.LENGTH_SHORT).show();
             loadMainUI();
 		}
 		return false;

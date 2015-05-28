@@ -13,12 +13,11 @@ import android.widget.TextView;
 
 public class MainUIAdapter extends BaseAdapter {
 	
-	private static final String[] NAMES = new String[] {"手机信息", "软件管理", "手机杀毒", "信息检测"};
+	private static final String[] NAMES = new String[] {"手机信息", "应用权限检测", "文本信息检测","版本更新"};
 		//, "未开发", "未开发", "未开发", "未开发", "未开发"};
 	
-	private static final int[] ICONS = new int[] {R.drawable.widget01, R.drawable.widget02, R.drawable.widget03, 
-        R.drawable.widget04};
-	//, R.drawable.widget05, R.drawable.widget06, R.drawable.widget07, R.drawable.widget08, R.drawable.widget09};
+	private static final int[] ICONS = new int[] {R.drawable.widget01, R.drawable.widget02, R.drawable.widget04, R.drawable.widget05};
+	//, R.drawable.widget06, R.drawable.widget07, R.drawable.widget08, R.drawable.widget09};
 	
 	private static ImageView imageView;
 	private static TextView textView;

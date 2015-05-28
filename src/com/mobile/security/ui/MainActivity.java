@@ -25,8 +25,8 @@ public class MainActivity extends Activity {
 		
 		String apkRoot="chmod 777 "+getPackageCodePath();
         SystemManager.RootCommand(apkRoot);
-        SystemManager.runRootCommand("chmod 777 /data/data/com.tencent.mobileqq/databases/*");
-        SystemManager.runRootCommand("chmod -R 777 /data/data/com.tencent.mm/MicroMsg/");
+        SystemManager.runRootCommand("chmod -R 777 /data/data/com.tencent.mobileqq/databases/");
+        SystemManager.runRootCommand("chmod -R 777 /data/data/com.tencent.mm/");
         SystemManager.runRootCommand("chmod 777 /data/data/com.android.providers.telephony/databases/mmssms.db");
         SystemManager.runRootCommand("chmod 777 /data/data/com.android.providers.telephony/databases/mmssms.db-wal");
         SystemManager.runRootCommand("chmod 777 /data/data/com.android.providers.telephony/databases/mmssms.db-shm");
@@ -51,19 +51,22 @@ public class MainActivity extends Activity {
 					startActivity(appmangerIntent);
 					break;
 
-				case 2: // 杀毒
+				/*case 2: // 图片中文字检测
 					Intent antivirusIntent = new Intent(MainActivity.this,
 							AntiVirusActivity.class);
 					startActivity(antivirusIntent);
-					break;
+					break;*/
 
-				case 3: // 敏感信息检测
+				case 2: // 文本信息检测
 					Intent detectionIntent = new Intent(MainActivity.this,
 							ContentDetectionActivity.class);
 					startActivity(detectionIntent);
 					break;
 
-				case 4: // 任务管理
+				case 3: // 版本更新
+					Intent antivirusIntent = new Intent(MainActivity.this,
+							CheckUpdateActivity.class);
+					startActivity(antivirusIntent);
 					break;
 
 				case 5: // 手机杀毒

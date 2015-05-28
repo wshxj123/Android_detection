@@ -26,7 +26,9 @@ public class UpdateInfoService {
 		HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
 		httpURLConnection.setConnectTimeout(5000);
 		httpURLConnection.setRequestMethod("GET");
+		httpURLConnection.connect();
 		InputStream is = httpURLConnection.getInputStream();
-		return UpdateInfoParser.getUpdateInfo(is);
+		UpdateInfo uis = UpdateInfoParser.getUpdateInfo(is);
+		return uis;
 	}
 }

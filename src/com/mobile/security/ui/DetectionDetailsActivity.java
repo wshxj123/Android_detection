@@ -144,7 +144,7 @@ public class DetectionDetailsActivity extends Activity implements
 			e.printStackTrace();
 		}
 
-		if (filecontent.equals(""))
+		if(filecontent.length() <= 1)
 			return;
 		String parts1[] = filecontent.split("]");
 		for (int i = 0; i < parts1.length; i++) {
@@ -193,6 +193,9 @@ public class DetectionDetailsActivity extends Activity implements
 			// TODO 自动生成的 catch 块
 			e.printStackTrace();
 		}
+		
+		if(filecontent.length() <= 1)
+			return;
 
 		String parts2[] = filecontent.split(";");
 		for (int i = 0; i < parts2.length; i++) {
