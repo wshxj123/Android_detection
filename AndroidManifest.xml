@@ -63,9 +63,17 @@
             android:name="com.mobile.security.ui.SetWordsActivity"
             android:theme="@style/MyDialogStyle" >
         </activity>
-                <activity
+        <activity
             android:name="com.mobile.security.ui.CheckUpdateActivity"
-            android:theme="@style/MyDialogStyle" >
+            android:theme="@android:style/Theme.Light.NoTitleBar" >
+        </activity>
+        <activity
+            android:name="com.mobile.security.ui.WordinPicActivity"
+            android:theme="@android:style/Theme.Light.NoTitleBar" >
+        </activity>
+        <activity
+            android:name="com.mobile.security.ui.FileManagerActivity"
+            android:theme="@android:style/Theme.Dialog" >
         </activity>
     </application>
 

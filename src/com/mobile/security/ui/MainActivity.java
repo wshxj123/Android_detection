@@ -51,22 +51,22 @@ public class MainActivity extends Activity {
 					startActivity(appmangerIntent);
 					break;
 
-				/*case 2: // 图片中文字检测
-					Intent antivirusIntent = new Intent(MainActivity.this,
-							AntiVirusActivity.class);
-					startActivity(antivirusIntent);
-					break;*/
+				case 2: // 图片中文字检测
+					Intent wordPicIntent = new Intent(MainActivity.this,
+							WordinPicActivity.class);
+					startActivity(wordPicIntent);
+					break;
 
-				case 2: // 文本信息检测
+				case 3: // 文本信息检测
 					Intent detectionIntent = new Intent(MainActivity.this,
 							ContentDetectionActivity.class);
 					startActivity(detectionIntent);
 					break;
 
-				case 3: // 版本更新
-					Intent antivirusIntent = new Intent(MainActivity.this,
+				case 4: // 版本更新
+					Intent cuIntent = new Intent(MainActivity.this,
 							CheckUpdateActivity.class);
-					startActivity(antivirusIntent);
+					startActivity(cuIntent);
 					break;
 
 				case 5: // 手机杀毒
