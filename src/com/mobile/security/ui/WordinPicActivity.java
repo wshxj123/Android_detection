@@ -3,6 +3,8 @@ package com.mobile.security.ui;
 import java.io.File;
 import java.util.ArrayList;
 import com.mobile.security.R;
+import com.mobile.security.engine.FileUploadAsyncTask;
+import com.mobile.security.engine.FileUploadAsyncTask.DataFinishListener;
 import com.mobile.security.engine.GetPicPath;
 import com.mobile.security.utils.Logger;
 
@@ -14,11 +16,11 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
 
-public class WordinPicActivity extends Activity {
+public class WordinPicActivity extends Activity implements DataFinishListener{
 
 	public static final int FILE_RESULT_CODE = 1;
 
-	private TextView textView;
+	private TextView filefolderpath, picpath;
 	private ArrayList<String> Flist = new ArrayList<String>();
 
 	@Override
@@ -27,7 +29,9 @@ public class WordinPicActivity extends Activity {
 		setContentView(R.layout.word_pic);
 		Button choice = (Button) findViewById(R.id.choice);
 		Button upButton = (Button) findViewById(R.id.upload);
-		textView = (TextView) findViewById(R.id.fileText);
+		filefolderpath = (TextView) findViewById(R.id.fileText);
+		picpath = (TextView) findViewById(R.id.picpath);
+		
 
 		choice.setOnClickListener(new OnClickListener() {
 
@@ -44,8 +48,15 @@ public class WordinPicActivity extends Activity {
 				for (int i = 0; i < Flist.size(); i++) {
 					allfileFiles[i] = new File(Flist.get(i));
 				}
-				new com.mobile.security.engine.FileUploadAsyncTask(
-						WordinPicActivity.this).execute(allfileFiles);
+				FileUploadAsyncTask fuAsyncTask = new FileUploadAsyncTask(WordinPicActivity.this);
+				fuAsyncTask.setFinishListener(new DataFinishListener() {
+						@Override
+						public void dataFinishSuccessfully(Object data) {
+							// TODO Auto-generated method stub
+							picpath.setText(String.valueOf(data));
+						}
+				});
+				fuAsyncTask.execute(allfileFiles);
 			}
 		});
 	}
@@ -55,9 +66,15 @@ public class WordinPicActivity extends Activity {
 			Bundle bundle = null;
 			if (data != null && (bundle = data.getExtras()) != null) {
 				Flist.clear();
-				textView.setText(bundle.getString("file"));
+				filefolderpath.setText(bundle.getString("file"));
 				GetPicPath.listFile(bundle.getString("file"), Flist);
 			}
 		}
+	}
+
+	@Override
+	public void dataFinishSuccessfully(Object data) {
+		// TODO Auto-generated method stub
+		
 	}
 }

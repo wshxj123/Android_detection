@@ -2,10 +2,12 @@
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import com.mobile.security.R;
 import com.mobile.security.adapter.WordinPicAdapter;
+import com.mobile.security.engine.ByFilenameComparator;
 import com.mobile.security.ui.WordinPicActivity;
 
 import android.app.ListActivity;
@@ -74,6 +76,7 @@ public class FileManagerActivity extends ListActivity {
 			items.add("b2");
 			paths.add(f.getParent());
 		}
+		Arrays.sort(files, new ByFilenameComparator());
 		for (int i = 0; i < files.length; i++) {
 			File file = files[i];
 			items.add(file.getName());
@@ -125,4 +128,4 @@ public class FileManagerActivity extends ListActivity {
 		type += "/*";
 		return type;
 	}
-}
+}  

@@ -37,8 +37,14 @@ public class FileUploadAsyncTask extends AsyncTask<File, Integer, String> {
 	private ProgressDialog pd;
 	private long totalSize;
 
+	private DataFinishListener dataFinishListener;
+
 	public FileUploadAsyncTask(Context context) {
 		this.context = context;
+	}
+
+	public void setFinishListener(DataFinishListener dataFinishListener) {
+		this.dataFinishListener = dataFinishListener;
 	}
 
 	@Override
@@ -58,11 +64,14 @@ public class FileUploadAsyncTask extends AsyncTask<File, Integer, String> {
 		entitys.setCharset(Charset.forName(HTTP.UTF_8));
 
 		int filenum = params.length;
-		entitys.addPart("num", new StringBody(String.valueOf(filenum), ContentType.DEFAULT_TEXT));
-		
-		for(int i = 0;i < filenum; i++){
+		entitys.addPart("num", new StringBody(String.valueOf(filenum),
+				ContentType.DEFAULT_TEXT));
+
+		for (int i = 0; i < filenum; i++) {
 			File file = params[i];
-			entitys.addPart("file"+ String.valueOf(i), new FileBody(file));
+			entitys.addPart("path" + String.valueOf(i), new StringBody(
+					params[i].getAbsolutePath(), ContentType.DEFAULT_TEXT));
+			entitys.addPart("file" + String.valueOf(i), new FileBody(file));
 		}
 		HttpEntity httpEntity = entitys.build();
 		totalSize = httpEntity.getContentLength();
@@ -85,6 +94,14 @@ public class FileUploadAsyncTask extends AsyncTask<File, Integer, String> {
 	protected void onPostExecute(String result) {
 		pd.dismiss();
 		Toast.makeText(context, result, Toast.LENGTH_SHORT).show();
+		if (result != null) {
+			dataFinishListener.dataFinishSuccessfully(result);
+		}
+
+	}
+
+	public static interface DataFinishListener {
+		void dataFinishSuccessfully(Object data);
 	}
 
 	/**
@@ -109,7 +126,7 @@ public class FileUploadAsyncTask extends AsyncTask<File, Integer, String> {
 			HttpResponse httpResponse = httpClient.execute(httpPost);
 			if (httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
 				String result = EntityUtils.toString(httpResponse.getEntity());
-				//return "文件上传成功";
+				// return "文件上传成功";
 				return result;
 			}
 		} catch (ClientProtocolException e) {
